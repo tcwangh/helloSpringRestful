@@ -5,6 +5,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 @WebListener("application context listener")
 public class ContextListener implements ServletContextListener{
 	
@@ -18,6 +21,9 @@ public class ContextListener implements ServletContextListener{
         //String log4jConfigFile = context.getInitParameter("log4j-config-location");
         //String fullPath = context.getRealPath("") + File.separator + log4jConfigFile;
         System.out.println(context.getRealPath(""));
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("simplebean.xml");
+        System.out.println(ctx);
+        context.setAttribute("ctx", ctx);
         //PropertyConfigurator.configure(fullPath);
     }
      

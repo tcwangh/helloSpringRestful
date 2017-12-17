@@ -4,6 +4,7 @@ package idv.tim.test.controller;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import idv.tim.test.model.CarsAndTruck;
 import idv.tim.test.model.Message;
 
 import javax.annotation.PreDestroy;
+import javax.servlet.ServletContext;
 
 import java.net.URL;
 import java.util.List;
@@ -27,6 +29,9 @@ import javax.annotation.PostConstruct;
 @RestController
 @RequestMapping("/hello")
 public class SpringRestController {
+	
+	@Autowired
+	ServletContext servletContext;
 	
 	static final Logger logger = Logger.getLogger(SpringRestController.class);
 	
@@ -48,10 +53,14 @@ public class SpringRestController {
 		logger.info("[info] This is a logging statement from log4j:" + result);
 		logger.debug("[debug] This is a logging statement from log4j:" + result);
 		logger.trace("[trace] This is a logging statement from log4j:" + result);
-		ApplicationContext context = new ClassPathXmlApplicationContext("simplebean.xml");
-		logger.info(context);
-		HelloWorld obj = (HelloWorld) context.getBean("helloBean");
-		obj.printHello();
+		//ApplicationContext context = new ClassPathXmlApplicationContext("simplebean.xml");
+		//logger.info(context);
+		//HelloWorld obj = (HelloWorld) context.getBean("helloBean");
+		//obj.printHello();
+		ApplicationContext ctx = (ApplicationContext)servletContext.getAttribute("ctx");
+		logger.info(ctx);
+		HelloWorld obj2 = (HelloWorld) ctx.getBean("helloBean");
+		obj2.printHello();
 		Message msg = new Message(name, "Hello, " + name);
 		return msg;
 	}
