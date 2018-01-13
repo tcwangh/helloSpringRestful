@@ -4,7 +4,13 @@
 		<dependencies>
 			<module name="config.siview.hellospringrestful" />
 			<module name="config.siview.simplebean" />
+			<module name="config.persistence">
+				<imports>
+					<include path="META-INF**"/>
+                </imports>
+            </module>
 			<module name="idv.tim.simplebean" />
+			<module name="com.oracle.db" />
 		</dependencies>
 		<exclusions>
 			<module name="org.apache.log4j" />

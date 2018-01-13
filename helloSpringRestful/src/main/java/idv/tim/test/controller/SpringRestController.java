@@ -17,8 +17,13 @@ import idv.tim.test.HelloWorld;
 import idv.tim.test.model.Car;
 import idv.tim.test.model.CarsAndTruck;
 import idv.tim.test.model.Message;
+import idv.tim.test.model.CustomerInfo;
 
 import javax.annotation.PreDestroy;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
 import java.net.URL;
@@ -64,6 +69,40 @@ public class SpringRestController {
 		Message msg = new Message(name, "Hello, " + name);
 		return msg;
 	}
+	
+	@RequestMapping(value={"/customer/{id}"}, method={org.springframework.web.bind.annotation.RequestMethod.GET})
+    public CustomerInfo CustomerInfo(@PathVariable(value="id") int custId)
+    {
+		CustomerInfo custInfo;
+	    EntityManager em = null;
+	    init();
+	    logger.info((new StringBuilder()).append("Get CustomerInfo:").append(custId).toString());
+	    custInfo = new CustomerInfo();
+	    try {
+	    	EntityManagerFactory factory = Persistence.createEntityManagerFactory("mfgDataSourceJPA");
+	    	em = factory.createEntityManager();
+	    	Query q = em.createNativeQuery("SELECT CUSTID,FIRSTNAME,LASTNAME FROM CUSTOMERS WHERE CUSTID=#custid");
+	    	q.setParameter("custid", Integer.valueOf(custId));
+	    	List resultList = q.getResultList();
+	    	logger.info((new StringBuilder()).append("Query result size is ").append(resultList.size()).toString());
+	    	for(int i = 0; i < resultList.size(); i++)
+	    	{
+	    		Object record[] = (Object[])(Object[])resultList.get(i);
+	    		custInfo.setCustid(Long.parseLong(record[0].toString()));
+	    		custInfo.setFirstname((String)record[1]);
+	    		custInfo.setLastname((String)record[2]);
+	    	}
+	    }catch(Exception e) {
+	    	logger.error("Read customer id-" + custId + " fail.");
+	    }finally{
+	    	if (em!=null) {
+	    		em.close();
+	    	}
+	    }
+	    return custInfo;
+
+
+    }
 		
 	@RequestMapping(value = "/{name}/{id}", method = RequestMethod.GET)
 	public Message hello(@PathVariable("name") String name,@PathVariable("id") String id) {
